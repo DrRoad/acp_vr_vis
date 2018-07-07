@@ -23,6 +23,8 @@ source("./helpers/trimesh_to_threejson.R")
 ## Constants
 MESH_FOOTPRINT_SCALE <- 0.1
 MESH_HEIGHT_SCALE <- 3
+MAP_TO_AF_ROT_MATRIX <- matrix(c(1, 0, 0, 0, 0, 1, 0, -1, 0),
+                               byrow = FALSE, ncol = 3, nrow = 3)
 ################################################################################
 
 ### Read data
@@ -184,6 +186,7 @@ acp_asset <- a_in_mem_asset(data = list(acp_tex_json, readr::read_file_raw(texfi
                             src = "./data/acp.json",
                             parts = texfile)
 
+
 ################################################################################
 
 ## Scene construction
@@ -193,28 +196,46 @@ acp_asset <- a_in_mem_asset(data = list(acp_tex_json, readr::read_file_raw(texfi
 
 ## Helper assets
 ## xy: an xy coordinate
-a_roaming_koala <- function(xyz, radius = 1.5, n_paths = 3){
-  
-  koala_asset <- a_asset("koala", src = "./data/Mesh_Koala.gltf",
-                         parts = c("./data/Mesh_Koala.bin",
-                                   "./data/Tex_Koala.png")) 
+a_roaming_koala <- function(xyz, koala_id, radius = 1.5, n_paths = 3, transit_time = 9000){
 
-  koala <- a_entity(gltf_model = koala_asset,
-                    position = c(0, 2, 0),
-                    scale = c(1, 1, 1) * 0.05,
-                    alongpath = list(curve = "#track1",
-                                     loop = TRUE,
-                                     rotate = TRUE,
-                                     dur = 3000))
+  ## offset the height so they're standing
+  xyz[2] <- xyz[2] + 1.5
+
+  ## A koala 
+  a_koala <- purrr::partial(a_entity,
+                            id = koala_id,
+                            gltf_model = a_asset("koala", src = "./data/Mesh_Koala.gltf",
+                                                 parts = c("./data/Mesh_Koala.bin",
+                                                           "./data/Tex_Koala.png")),
+                            position = xyz,
+                            scale = c(1, 1, 1) * 0.03,
+                            rotation = c(0,0,0))
+
+  ## Make curves
   theta <- runif(n_paths)
-  x <- cos(theta) * radius
-  y <- sin(theta) * radius
+  x <- cos(theta * 2 * pi) * radius
+  z <- sin(theta * 2 * pi) * radius
 
-  pmap(list(x,y), function(x,y){
-    a_entity
-    ##make curves
-  })
+  ## make the track points
+  track_points <- pmap(list(x, z), function(x, z){
+    list(
+      a_entity("curve-point", position = c(xyz[1], xyz[2], xyz[3])),
+      a_entity("curve-point", position = c(xyz[1] + x, xyz[2], xyz[3] + z))
+    )
+  }) %>% flatten()
 
+  ## make the curve
+  curve <- a_entity("curve",
+                    id = paste0(koala_id,"track"),
+                    children = track_points, 
+                    js_sources = list("https://rawgit.com/protyze/aframe-curve-component/master/dist/aframe-curve-component.min.js","https://rawgit.com/protyze/aframe-alongpath-component/master/dist/aframe-alongpath-component.min.js"))
+
+
+  my_koala <- a_koala(alongpath = list(curve = paste0("#",koala_id,"track"),
+                           loop = TRUE,
+                           rotate = TRUE,
+                           dur = transit_time),
+                     children = list(curve))
 }
 
 
@@ -236,32 +257,52 @@ controls <- a_pc_control_camera(position = c(-3.2, 22.2, 34))
 
 ## Points
 ## Make coords relative to centre of mesh
-sighting_matrix[, 1] <- sighting_matrix[, 1] - mean(acp_trimesh$P[ ,1])
-sighting_matrix[, 2] <- sighting_matrix[, 2] - mean(acp_trimesh$P[ ,2])
-sighting_matrix[, 3] <- sighting_matrix[, 3] - mean(acp_trimesh$P[ ,3])
+points_matrix <-
+  cbind(sighting_matrix[, 1] - mean(acp_trimesh$P[ ,1]),
+        sighting_matrix[, 2] - mean(acp_trimesh$P[ ,2]),
+        sighting_matrix[, 3] - mean(acp_trimesh$P[ ,3])) %*%
+  MAP_TO_AF_ROT_MATRIX *
+  MESH_FOOTPRINT_SCALE +
+matrix(c(rep(0,nrow(sighting_matrix)),
+       rep(1, nrow(sighting_matrix)),
+       rep(0, nrow(sighting_matrix))),
+       byrow = FALSE, nrow = nrow(sighting_matrix)
+       ) * height_correction * MESH_FOOTPRINT_SCALE
 
 
-## Koala model
+  
 
-sighting_points <- pmap(as.data.frame(sighting_matrix),
-                        function(x,y,z){
+colnames(points_matrix) <- c("x", "y", "z")
+
+## Sighting Points
+sighting_points <- pmap(as.data.frame(points_matrix),
+                        function(x, y, z){
                           a_entity(tag = "sphere",
-                                   position = c(x, y, z),
-                                   radius = 10,
-                                   color = "#00b6ff")
+                                   position = c(x, y, z), ## swap axis since our z is aframe y
+                                   radius = 1,
+                                   color = "#00b6ff",
+                                   material = list(opacity = 0.6))
                         })
 
+## Roaming Koalas
+koala_df <- cbind(as.data.frame(points_matrix),
+                  list(id = letters[seq(nrow(points_matrix))]),
+                  stringsAsFactors = FALSE)
 
-koala_path <- a_entity(tag = "curve",
-                       id = "track1",
-                       js_sources = list("https://rawgit.com/protyze/aframe-curve-component/master/dist/aframe-curve-component.min.js","https://rawgit.com/protyze/aframe-alongpath-component/master/dist/aframe-alongpath-component.min.js"),
-                       children = list(
-                         a_entity("curve-point", position = c(-2, 2, 0)),
-                         a_entity("curve-point", position = c(0, 2, 0)),
-                         a_entity("curve-point", position = c(2, 2, 0)),
-                         a_entity("curve-point", position = c(0, 2, 0)),
-                         a_entity("curve-point", position = c(-2, 2, 0))
-                       ))
+koalas <- pmap(koala_df,
+               function(x, y, z, id){
+                 a_roaming_koala(xyz = c(x, y, z),
+                                 koala_id = id,
+                                 radius = runif(1, 35, 55) * MESH_FOOTPRINT_SCALE,
+                                 transit_time = rnorm(1, 18000, 3000)
+                                 )
+               })
+
+points_plot <- a_entity(children = c(sighting_points, koalas),
+                        position = c(0,
+                                     0, 
+                                     0),
+                        scale = c(1, 1, 1))
 
 
 acp_model <- a_json_model(src_asset = acp_asset,
@@ -270,8 +311,7 @@ acp_model <- a_json_model(src_asset = acp_asset,
                           scale = c(1, 1, 1) * MESH_FOOTPRINT_SCALE,
                           position = c(0,
                                        0 + height_correction * MESH_FOOTPRINT_SCALE,
-                                       0),
-                          children = sighting_points)
+                                       0))
 
 aframe_scene <-
   a_scene(template = "empty",
@@ -281,9 +321,8 @@ aframe_scene <-
                           sky,
                           controls,
                           lighting_model,
-                          koala_path,
-                          koala))
+                          points_plot))
 
-aframe_scene$serve(port = 8080)
+aframe_scene$serve(port = 8081)
 
 aframe_scene$stop()
