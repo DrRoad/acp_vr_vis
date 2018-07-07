@@ -252,6 +252,7 @@ a_roaming_koala <- function(xyz, koala_id, radius = 1.5, n_paths = 3, transit_ti
 
 ## Utility assets
 sky <- a_entity(tag = "sky",
+                id = "sky",
                 color = "#000")
 
 lighting_model <- a_entity(children = list(
@@ -264,7 +265,22 @@ lighting_model <- a_entity(children = list(
                                      intensity = 0.53)
                           ))
 
-controls <- a_pc_control_camera(position = c(-3.2, 22.2, 34))
+controls <- a_entity(id = "rig",
+                     movement_controls = list(fly = TRUE, easingY = 15,
+                                              acceleration = 100),
+                     js_sources = list("https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.0.2/dist/aframe-extras.controls.js"),
+                     position = c(-3.2, 22.2, 34),
+                     children = list(
+                       a_entity(camera = "",
+                                position = c(0, 1.6, 0),
+                                look_controls = list(pointerLockEnabled = TRUE),
+                                children = list(
+                                  a_entity("cursor", cursor = list(fuse = TRUE))
+                                ))
+                     ))
+
+## 360 Panorama
+pano <- a_asset(tag = "img", "pano", src = "./data/SP53.jpg")
 
 ## Points
 ## Make coords relative to centre of mesh
@@ -290,9 +306,15 @@ sighting_points <- pmap(as.data.frame(points_matrix),
                         function(x, y, z){
                           a_entity(tag = "sphere",
                                    position = c(x, y, z), ## swap axis since our z is aframe y
-                                   radius = 1,
+                                   radius = 2,
                                    color = "#00b6ff",
-                                   material = list(opacity = 0.6))
+                                   material = list(opacity = 0.5),
+                                   js_sources = list("https://unpkg.com/aframe-event-set-component@^4.0.0/dist/aframe-event-set-component.min.js"),
+                                   event_set__click = list(`_event` = "click",
+                                                           `_target` = "#sky",
+                                                           src = pano,
+                                                           color = "")
+                                   )
                         })
 
 ## Roaming Koalas
@@ -309,11 +331,7 @@ koalas <- pmap(koala_df,
                                  )
                })
 
-points_plot <- a_entity(children = c(sighting_points, koalas),
-                        position = c(0,
-                                     0, 
-                                     0),
-                        scale = c(1, 1, 1))
+points_plot <- a_entity(children = c(sighting_points, koalas))
 
 
 acp_model <- a_json_model(src_asset = acp_asset,
