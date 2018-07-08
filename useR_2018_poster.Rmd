@@ -34,7 +34,8 @@ We present an R package, `r2vr`, that provides scientists with bridge to WebVR v
   - install it: `devtools::install_github("milesmcbain/r2vr")`
 * A-Frame
   - demos: https://aframe.io
-  - tutorial: https://aframe.io/aframe-school/ 
+  - tutorial: https://aframe.io/aframe-school/
+* This poster + vis: https:://github.com/milesmcbain/acp_vr_vis
 
 #### Acknowledgements
 Briding scientific computing and VR is a project funded by ACEMS in partnership with CSIRO Data 61, at Queensland University of Technology. Specialist support has been provided in-kind by the Australian Antarctic Division.
