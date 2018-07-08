@@ -81,7 +81,7 @@ controls <- a_entity(id = "rig",
                      movement_controls = list(fly = TRUE, easingY = 15,
                                               acceleration = 100),
                      js_sources = list("https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.0.2/dist/aframe-extras.controls.js"),
-                     position = c(-3.2, 22.2, 34),
+                     position = c(0.8, 32, 49),
                      children = list(
                        a_entity(camera = "",
                                 position = c(0, 1.6, 0),

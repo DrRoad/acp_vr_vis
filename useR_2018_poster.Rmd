@@ -1,0 +1,64 @@
+---
+title: "An R Framework for Building Web Virtual Reality Experiences"
+author: Miles McBain (@milesmcbain), Josh Bowden, Kerrie Mengersen, Tomasz Bednarz
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    source_code: embed
+    css: style.css
+---
+
+Row
+--------------------------------------------------------------------------------
+
+### A Bridge to WebVR {data-width=500}
+The maturing Web Virtual Reality (WebVR) ecosystem presents scientists with versatile
+platform for conducting experiments and communicating their work. However, current open tools for this medium require familiarity with either games development (Unity) or web development (React 360, A-Frame).
+
+We present an R package, `r2vr`, that provides scientists with bridge to WebVR via R using Mozilla's A-Frame HTML framework.
+
+
+<div>
+<center>
+<img src="resources/r2vr_stack.png"></img>
+</center>
+</div> 
+
+
+#### More Information
+
+* `r2vr` 
+  - view syntax and gallery: https://www.github.com/milesmcbain/r2vr
+  - read posts about it: https://milesmcbain.xyz/r2vr
+  - install it: `devtools::install_github("milesmcbain/r2vr")`
+* A-Frame
+  - demos: https://aframe.io
+  - tutorial: https://aframe.io/aframe-school/ 
+
+#### Acknowledgements
+Briding scientific computing and VR is a project funded by ACEMS in partnership with CSIRO Data 61, at Queensland University of Technology. Specialist support has been provided in-kind by the Australian Antarctic Division.
+
+<div>
+  <img src="resources/csiro_acems_qut_aad.png"></img>
+</div> 
+### Alexander Clark Park Koala Survey {data-width=500}
+<center>
+<iframe id="acp" title="WebVR Vis" src="http://127.0.0.1:8081"
+    width="800" height ="600"></iframe>
+</center>
+<center>Urban pressure on Queenland's Koalas. This isolated colony in Alexander
+Clark Park, south-west of Brisbane is at high risk of mortality from pet attacks
+and other human related causes.</center>
+<br>
+
+ACEMS is using Virtual Reality to immerse Koala experts in habitat imagery to elicit priors for Bayesian spatial models of habitat suitability.
+
+This WebVR visualisation was developed entirely in R using `r2vr`, involving:
+
+* Elevation data from Geosciences Australia
+* Satellite imagery from Google maps
+    - *(c) CNES / Airbus, DigitalGlobe*
+* 3D model by Google (https://poly.goole.com)
+* Koala survey data from Queensland Department of Environment and Heritage Protection
+* 360 degree image survey by ACEMS. 
