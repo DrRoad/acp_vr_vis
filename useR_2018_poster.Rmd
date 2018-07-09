@@ -4,9 +4,10 @@ author: Miles McBain (@milesmcbain), Josh Bowden, Kerrie Mengersen, Tomasz Bedna
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
-    social: menu
-    source_code: embed
+    source_code: https://www.github.com/milesmcbain/acp_vr_vis
+    logo: ./resources/mmtttl.png
     css: style.css
+    theme: united
 ---
 
 Row
@@ -16,9 +17,10 @@ Row
 The maturing Web Virtual Reality (WebVR) ecosystem presents scientists with versatile
 platform for conducting experiments and communicating their work. However, current open tools for this medium require familiarity with either games development (Unity) or web development (React 360, A-Frame).
 
-We present an R package, `r2vr`, that provides scientists with bridge to WebVR via R using Mozilla's A-Frame HTML framework.
+We present an R package, `r2vr`, that provides scientists and storytellers with a
+bridge to WebVR via R using Mozilla's A-Frame HTML framework.
 
-
+<br>
 <div>
 <center>
 <img src="resources/r2vr_stack.png"></img>
@@ -35,7 +37,7 @@ We present an R package, `r2vr`, that provides scientists with bridge to WebVR v
 * A-Frame
   - demos: https://aframe.io
   - tutorial: https://aframe.io/aframe-school/
-* This poster + vis: https:://github.com/milesmcbain/acp_vr_vis
+* This poster + vis: https://github.com/milesmcbain/acp_vr_vis
 
 #### Acknowledgements
 Bridging scientific computing and VR is a project funded by ACEMS in partnership with CSIRO Data 61, at Queensland University of Technology. Specialist support has been provided in-kind by the Australian Antarctic Division.
@@ -53,7 +55,9 @@ Clark Park, south-west of Brisbane is at high risk of mortality from pet attacks
 and other human related causes.</center>
 <br>
 
-ACEMS is using Virtual Reality to immerse Koala experts in habitat imagery to elicit priors for Bayesian spatial models of habitat suitability.
+In this ACEMS project Virtual Reality is being used to immerse Koala experts in
+habitat imagery to elicit priors for Bayesian spatial models of habitat
+suitability and species distribution.
 
 This WebVR visualisation was developed entirely in R using `r2vr`, involving:
 

@@ -1,0 +1,9 @@
+/* Whole document: */
+body{
+    font-size: 12pt;
+}
+.navbar-inverse {
+    background-color: #981CEB;
+    border-color: #560e87;
+}
+
