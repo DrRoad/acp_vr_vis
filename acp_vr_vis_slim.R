@@ -91,8 +91,21 @@ controls <- a_entity(id = "rig",
                                 ))
                      ))
 
-## 360 Panorama
-pano <- a_asset(tag = "img", "pano", src = "./data/SP53.jpg")
+## 360 Panoramas
+
+## signtings 2 -> sp56
+## sighting 3 -> sp46
+## sighting 4 -> sp53
+## sighting 1 -> sp50
+
+pano_images <- imap(c("./data/SP50.jpg",
+                      "./data/SP56.jpg",
+                      "./data/SP46.jpg",
+                      "./data/SP53.jpg"),
+                    ~a_asset(tag = "img", paste0("pano",.y), src = .x))
+
+
+
 
 ## Points
 ## Make coords relative to centre of mesh
@@ -113,9 +126,12 @@ matrix(c(rep(0,nrow(sighting_matrix)),
 
 colnames(points_matrix) <- c("x", "y", "z")
 
+points_df <- as_tibble(points_matrix) %>%
+  add_column(image = pano_images)
+
 ## Sighting Points
-sighting_points <- pmap(as.data.frame(points_matrix),
-                        function(x, y, z){
+sighting_points <- pmap(points_df,
+                        function(x, y, z, image){
                           a_entity(tag = "sphere",
                                    position = c(x, y, z), ## swap axis since our z is aframe y
                                    radius = 2,
@@ -124,8 +140,13 @@ sighting_points <- pmap(as.data.frame(points_matrix),
                                    js_sources = list("https://unpkg.com/aframe-event-set-component@^4.0.0/dist/aframe-event-set-component.min.js"),
                                    event_set__click = list(`_event` = "click",
                                                            `_target` = "#sky",
-                                                           src = pano,
-                                                           color = "")
+                                                           src = image,
+                                                           color = ""),
+                                   event_set__mouseenter = list(`_event` = "mouseenter",
+                                                                color = "#fff432"),
+
+                                   event_set__mouseleave = list(`_event` = "mouseleave",
+                                                                color = "#00b6ff")
                                    )
                         })
 
@@ -170,5 +191,5 @@ aframe_scene <-
                           points_plot))
 
 aframe_scene$serve(port = 8081)
-
-aframe_scene$stop()
+ 
+##aframe_scene$stop()
