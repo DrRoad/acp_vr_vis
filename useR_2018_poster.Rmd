@@ -61,9 +61,9 @@ suitability and species distribution.
 
 This WebVR visualisation was developed entirely in R using `r2vr`, involving:
 
-* Elevation data from Geosciences Australia
-* Satellite imagery from Google maps
+* Elevation data from Geosciences Australia (raster)
+* Satellite imagery from Google maps (image)
     - *(c) CNES / Airbus, DigitalGlobe*
-* 3D model by Google (https://poly.goole.com)
-* Koala survey data from Queensland Department of Environment and Heritage Protection
-* 360 degree image survey by ACEMS. 
+* 3D model by Google (https://poly.goole.com) (gltf)
+* Koala survey data from Queensland Department of Environment and Heritage Protection (csv)
+* 360 degree image survey by ACEMS. (image)
