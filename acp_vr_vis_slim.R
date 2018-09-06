@@ -172,7 +172,7 @@ acp_asset <- a_in_mem_asset(data = list(acp_tex_json, readr::read_file_raw(texfi
                             parts = texfile)
 
 
-acp_model <- a_json_model(src_asset = acp_asset,
+acp_model <- a_json_model(src = acp_asset,
                           mesh_smooth = TRUE,
                           rotation = c(-90, 0, 0),
                           scale = c(1, 1, 1) * MESH_FOOTPRINT_SCALE,
