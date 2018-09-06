@@ -64,6 +64,6 @@ This WebVR visualisation was developed entirely in R using `r2vr`, involving:
 * Elevation data from Geosciences Australia (raster)
 * Satellite imagery from Google maps (image)
     - *(c) CNES / Airbus, DigitalGlobe*
-* 3D model by Google (https://poly.goole.com) (gltf)
+* 3D model by Google (https://poly.google.com) (gltf)
 * Koala survey data from Queensland Department of Environment and Heritage Protection (csv)
 * 360 degree image survey by ACEMS. (image)
